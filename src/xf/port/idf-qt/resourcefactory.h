@@ -32,6 +32,7 @@ public:
 
 protected:
     XFResourceFactoryPort() {}
+
 };
 
 /** @} */ // end of port_idf_qt group

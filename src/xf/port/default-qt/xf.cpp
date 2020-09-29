@@ -60,3 +60,4 @@ int XF::execOnce()
 }
 
 #endif // USE_XF_CLASS_DEFAULT_QT_IMPLEMENTATION
+

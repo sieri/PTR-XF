@@ -7,6 +7,10 @@
 #include <QTimerEvent>
 #include "port-functions.h"
 
+
+
+#include <QDebug>
+
 static class TimeoutManagerTimer : public QObject
 {
 public:
@@ -25,7 +29,7 @@ public:
     {
         if (event->timerId() == _timerId)
         {
-            interface::XFTimeoutManager::getInstance()->tick();
+            XF_tick();
         }
     }
 
@@ -33,6 +37,27 @@ protected:
     int32_t _timerId;
 } timeoutManagerTimer;
 
-// TODO: Implement XF_startTimeoutManagerTimer(...) function  
+uint32_t TICKINTERVAL;
+
+
+void XF_startTimeoutManagerTimer(uint32_t tickInterval){
+    static TimeoutManagerTimer t;
+    t.start(tickInterval);
+    TICKINTERVAL = tickInterval;
+}
+
+
+
+
+int32_t XF_tickIntervalInMilliseconds()
+{
+    return TICKINTERVAL;
+}
+
+
+void XF_tick()
+{
+    interface::XFTimeoutManager::getInstance()->tick();
+}
 
 #endif // USE_XF_PORT_FUNCTIONS_DEFAULT_QT_IMPLEMENTATION

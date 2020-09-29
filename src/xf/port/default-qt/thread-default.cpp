@@ -13,3 +13,44 @@
 // TODO: Implement code for XFThreadDefault class
 
 #endif // USE_XF_THREAD_DEFAULT_QT_IMPLEMENTATION
+
+void XFThreadDefault::start()
+{
+    this->QThread::start();
+}
+
+void XFThreadDefault::stop()
+{
+
+}
+
+void XFThreadDefault::setPriority(XFThreadPriority priority)
+{
+    this->QThread::setPriority(QThread::Priority(priority));
+}
+
+XFThreadPriority XFThreadDefault::getPriority() const
+{
+    return (XFThreadPriority) this->priority();
+}
+
+void XFThreadDefault::delay(uint32_t milliseconds)
+{
+    this->wait(milliseconds);
+}
+
+XFThreadDefault::XFThreadDefault(interface::XFThreadEntryPointProvider *pProvider, interface::XFThread::EntryMethodBody entryMethod, const char *threadName, const uint32_t stackSize):QThread(),interface::XFThread()
+{
+    this->_pEntryMethodProvider = pProvider;
+    this->_entryMethod = entryMethod;
+
+    this->setStackSize(stackSize);
+
+    //TODO names
+
+}
+
+void XFThreadDefault::run()
+{
+   (_pEntryMethodProvider->*_entryMethod)( (const void*) nullptr );
+}

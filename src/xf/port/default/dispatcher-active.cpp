@@ -3,6 +3,7 @@
 #if (USE_XF_DISPATCHER_ACTIVE_DEFAULT_IMPLEMENTATION != 0)
 
 #include <cassert>
+#include <process.h>
 #if defined(XF_TRACE_EVENT_PUSH_POP) && (XF_TRACE_EVENT_PUSH_POP != 0)
     #include "trace/trace.h"
 #endif // XF_TRACE_EVENT_PUSH_POP
@@ -91,14 +92,29 @@ int XFDispatcherActiveDefault::execute(const void * param /* = nullptr */)
 
 int XFDispatcherActiveDefault::executeOnce()
 {
-	// TODO: Implement code for XFDispatcherActiveDefault::executeOnce
+    //TODO: check access.
+    const XFEvent* e = _events.front();
+
+    if(e != nullptr)
+    {
+        dispatchEvent(e);
+        _events.pop();
+    }
+
+
 
     return _bExecuting;
 }
 
 void XFDispatcherActiveDefault::dispatchEvent(const XFEvent * pEvent) const
 {
-	// TODO: Implement code for XFDispatcherActiveDefault::dispatchEvent
+    XFReactive* target = pEvent->getBehavior();
+    if(target->process(pEvent)) //process event, and check if needed to terminate on close
+    {
+        delete target;
+    }
+
+
 }
 
 #endif // USE_XF_DISPATCHER_ACTIVE_DEFAULT_IMPLEMENTATION
