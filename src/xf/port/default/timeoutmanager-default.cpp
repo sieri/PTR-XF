@@ -28,11 +28,13 @@ interface::XFTimeoutManager *XFTimeoutManagerDefault::getInstance()
 
 XFTimeoutManagerDefault::~XFTimeoutManagerDefault()
 {
-
+    _timeouts.clear();
+    delete _pMutex;
 }
 
 XFTimeoutManagerDefault::XFTimeoutManagerDefault():interface::XFTimeoutManager()
 {
+    _pMutex = interface::XFMutex::create();
 
 }
 
@@ -45,13 +47,18 @@ void XFTimeoutManagerDefault::scheduleTimeout(int32_t timeoutId, int32_t interva
 {
     XFTimeout* newTimeout = new XFTimeout(timeoutId, interval, pReactive);
 
+
     addTimeout(newTimeout);
+
 }
 
 void XFTimeoutManagerDefault::unscheduleTimeout(int32_t timeoutId, interface::XFReactive *pReactive)
 {
+    _pMutex->lock();
+
     TimeoutList::iterator it =  _timeouts.begin();
-    //TODO: Lock
+
+
     while (it != _timeouts.end()) {
 
         if((*it)->getBehavior() == pReactive && (*it)->getId() == timeoutId)
@@ -64,10 +71,16 @@ void XFTimeoutManagerDefault::unscheduleTimeout(int32_t timeoutId, interface::XF
         }
 
     }
+
+    _pMutex->unlock();
+
 }
 
 void XFTimeoutManagerDefault::tick()
 {
+
+    _pMutex->lock();
+
     if(!_timeouts.empty())
     {
         _timeouts.front()->substractFromRelTicks(_tickInterval);
@@ -79,19 +92,22 @@ void XFTimeoutManagerDefault::tick()
         }
     }
 
+    _pMutex->unlock();
+
 }
 
 
 void XFTimeoutManagerDefault::addTimeout(XFTimeout *pNewTimeout)
 {
 
-    //TODO:Check access
+    _pMutex->lock();
+
     TimeoutList::iterator it =  _timeouts.begin();
 
     bool inserted = false;
 
     while (!inserted && it!= _timeouts.end()) {
-        if((*it)->getRelTicks() < pNewTimeout->getRelTicks()){
+        if((*it)->getRelTicks() <= pNewTimeout->getRelTicks()){
 
             pNewTimeout->substractFromRelTicks((*it)->getRelTicks()); //remove the adequate amount of relative ticks
 
@@ -110,6 +126,8 @@ void XFTimeoutManagerDefault::addTimeout(XFTimeout *pNewTimeout)
     {
         _timeouts.insert(it,pNewTimeout); //insert at the end
     }
+    _pMutex->unlock();
+
 }
 
 void XFTimeoutManagerDefault::returnTimeout(XFTimeout *pTimeout)

@@ -48,5 +48,5 @@ interface::XFThread *XFResourceFactoryPort::createThread(interface::XFThreadEntr
 
 interface::XFMutex *XFResourceFactoryPort::createMutex()
 {
-    return NULL; //todo implement
+    return interface::XFMutex::create();
 }
