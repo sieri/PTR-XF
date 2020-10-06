@@ -16,13 +16,11 @@ interface::XFTimeoutManager * interface::XFTimeoutManager::getInstance()
     return XFTimeoutManagerDefault::getInstance();
 }
 
-// TODO: Implement code for XFTimeoutManagerDefault class
 
-#endif // USE_XF_TIMEOUTMANAGER_DEFAULT_IMPLEMENTATION
 
 interface::XFTimeoutManager *XFTimeoutManagerDefault::getInstance()
 {
-    static XFTimeoutManagerDefault instance = XFTimeoutManagerDefault(); //TODO: check this look buggy
+    static XFTimeoutManagerDefault instance;
     return &instance;
 }
 
@@ -85,7 +83,7 @@ void XFTimeoutManagerDefault::tick()
     {
         _timeouts.front()->substractFromRelTicks(_tickInterval);
 
-        while(!_timeouts.empty() && _timeouts.front()->getRelTicks() <= 0)
+        while(!_timeouts.empty() && _timeouts.front()->getRelTicks() <= 0) //send all timers that ended up at 0
         {
             returnTimeout(_timeouts.front());
             _timeouts.pop_front();
@@ -134,3 +132,6 @@ void XFTimeoutManagerDefault::returnTimeout(XFTimeout *pTimeout)
 {
     pTimeout->getBehavior()->pushEvent(pTimeout); //push the timeout to the event queue
 }
+
+
+#endif // USE_XF_TIMEOUTMANAGER_DEFAULT_IMPLEMENTATION

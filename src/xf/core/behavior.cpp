@@ -11,11 +11,25 @@ using interface::XFResourceFactory;
 XFBehavior::XFBehavior(bool ownDispatcher)
 {
     this->_hasOwnDispatcher = ownDispatcher;
+
+    if(this->_hasOwnDispatcher)
+    {
+    	this->_pDispatcher = XFResourceFactory::getInstance()->createDispatcher();
+    }
+    else
+    {
+    	this->_pDispatcher = XFResourceFactory::getInstance()->getDefaultDispatcher();
+    }
 }
 
 XFBehavior::~XFBehavior()
 {
-    //TODO:Check if stack clean
+	//check if the dispatcher is owned by this behaviour
+	if(this->_hasOwnDispatcher && this->_pDispatcher != XFResourceFactory::getInstance()->getDefaultDispatcher())
+	{
+		delete _pDispatcher;
+	}
+
 }
 
 void XFBehavior::startBehavior()
@@ -48,14 +62,7 @@ const XFEvent *XFBehavior::getCurrentEvent() const
 
 interface::XFDispatcher *XFBehavior::getDispatcher()
 {
-    if(hasOwnDispatcher())
-    {
-        return this->_pDispatcher;
-    }
-    else
-    {
-        return XFResourceFactory::getInstance()->getDefaultDispatcher();
-    }
+    return this->_pDispatcher;
 }
 
 const XFTimeout *XFBehavior::getCurrentTimeout()
@@ -91,8 +98,10 @@ interface::XFReactive::TerminateBehavior XFBehavior::process(const XFEvent *pEve
         return false;
     }
 
-    if(pEvent->deleteAfterConsume() && status.Consumed){
-        delete pEvent;     //TODO: Check for the other status
+    if(pEvent->deleteAfterConsume() && (status.is(status.Consumed) ||   //check if needed to be consumed
+                                        status.is(status.Terminate) ||
+                                        status.is(status.RegionFinished))){
+        delete pEvent;
     }
 }
 

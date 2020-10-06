@@ -7,5 +7,5 @@ XFNullTransition::XFNullTransition(interface::XFReactive *pBehavior): XFEvent(Nu
 
 bool XFNullTransition::deleteAfterConsume() const
 {
-    return true; //TODO: think about it may be useful
+    return true;
 }

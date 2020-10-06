@@ -16,11 +16,6 @@ interface::XFResourceFactory * interface::XFResourceFactory::getInstance()
     return XFResourceFactoryPort::getInstance();
 }
 
-// TODO: Implement code for XFResourceFactoryPort class
-
-
-
-#endif // USE_XF_PORT_IDF_QT_RESOURCE_FACTORY_IMPLEMENTATION
 
 interface::XFResourceFactory *XFResourceFactoryPort::getInstance()
 {
@@ -50,3 +45,5 @@ interface::XFMutex *XFResourceFactoryPort::createMutex()
 {
     return interface::XFMutex::create();
 }
+
+#endif // USE_XF_PORT_IDF_QT_RESOURCE_FACTORY_IMPLEMENTATION

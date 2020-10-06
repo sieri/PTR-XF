@@ -92,8 +92,8 @@ int XFDispatcherActiveDefault::execute(const void * param /* = nullptr */)
 
 int XFDispatcherActiveDefault::executeOnce()
 {
-    //TODO: check access.
-    const XFEvent* e = _events.front();
+
+    const XFEvent* e = _events.front(); //the queue itself is protected so no need to lock
 
     if(e != nullptr)
     {

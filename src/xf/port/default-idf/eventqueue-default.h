@@ -24,6 +24,7 @@
 class XFEventQueueDefault : public interface::XFEventQueue
 {
     using Mutex = XFMutexDefault;
+
 public:
     XFEventQueueDefault();
     virtual ~XFEventQueueDefault();

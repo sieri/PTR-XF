@@ -11,8 +11,7 @@ XFEventQueueDefault::XFEventQueueDefault() :
     _mutex(QMutex::NonRecursive)
 {
 }
-
-XFEventQueueDefault::~XFEventQueueDefault()
+    XFEventQueueDefault::~XFEventQueueDefault()
 {
     _newEvents.wakeAll();
 }
