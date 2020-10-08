@@ -28,14 +28,27 @@ void XF::initialize(int timeInterval, int argc, char** argv){
 
 int XF::exec()
 {
+	_bIsRunning = true;
 	 // Start default dispatcher
 	XFResourceFactory::getInstance()->getDefaultDispatcher()->start();
-	return XFResourceFactory::getInstance()->getDefaultDispatcher()->execute();
+
+
+	int retVal = XFResourceFactory::getInstance()->getDefaultDispatcher()->execute();
+
+	_bIsRunning = false;
+
+	return retVal;
 }
 
 int XF::execOnce()
 {
-	return XFResourceFactory::getInstance()->getDefaultDispatcher()->executeOnce();
+	_bIsRunning = true;
+
+	int retVal = XFResourceFactory::getInstance()->getDefaultDispatcher()->executeOnce();
+
+	_bIsRunning = false;
+
+	return retVal;
 }
 
 bool XF::isRunning()
@@ -51,6 +64,7 @@ void XF_initialize(int timeInterval)
 {
 	XF::initialize(timeInterval, 0, NULL);
 }
+
 void XF_exec()
 {
 	XF::exec();

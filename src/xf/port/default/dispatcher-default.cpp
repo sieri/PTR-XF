@@ -77,7 +77,7 @@ int XFDispatcherDefault::execute(const void * param)
 
 int XFDispatcherDefault::executeOnce()
 {
-
+	//access to the event queue is protected by the implementation of the queue and doesn't need to be managed at this level
     if(!_events.empty())
     {
 		const XFEvent* e = _events.front();

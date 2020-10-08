@@ -23,17 +23,19 @@ XFMutexDefault::~XFMutexDefault()
 
 void XFMutexDefault::lock()
 {
+	//block interrupts
 	enterCritical();
 }
 
 void XFMutexDefault::unlock()
 {
+	//reallow interrupts
 	exitCritical();
 }
 
 bool XFMutexDefault::tryLock(int32_t timeout)
 {
-	//always can lock in a single threaded, OS less embedded system
+	//always can lock in a single threaded, OS less embedded system, because you can't wait for it, nor can it fail to lock.
 	enterCritical();
 
 	return true;

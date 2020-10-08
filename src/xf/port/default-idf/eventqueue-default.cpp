@@ -24,6 +24,7 @@ bool XFEventQueueDefault::empty() const
 
 bool XFEventQueueDefault::push(const XFEvent* pEvent)
 {
+	//STD lists aren't safe from interrupts so need to be secured at this level, prevent having to lock more than the push
 	_mutex.lock();
 	_queue.push(pEvent);
 	_mutex.unlock();
@@ -33,8 +34,7 @@ bool XFEventQueueDefault::push(const XFEvent* pEvent)
 
 const XFEvent * XFEventQueueDefault::front()
 {
-	const XFEvent* e = _queue.front();
-	return e;
+	return _queue.front();
 }
 
 void XFEventQueueDefault::pop()
@@ -46,6 +46,7 @@ void XFEventQueueDefault::pop()
 
 bool XFEventQueueDefault::pend()
 {
+	//wait for the event queue to fill in. shouldn't be locked in because if waiting events can only come from interrupts.
 	while(_queue.empty());
 	return 	_queue.empty();
 }

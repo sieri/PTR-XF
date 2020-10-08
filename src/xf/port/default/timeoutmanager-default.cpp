@@ -20,7 +20,7 @@ interface::XFTimeoutManager * interface::XFTimeoutManager::getInstance()
 
 interface::XFTimeoutManager *XFTimeoutManagerDefault::getInstance()
 {
-    static XFTimeoutManagerDefault instance;
+    static XFTimeoutManagerDefault instance; //singleton
     return &instance;
 }
 
@@ -43,7 +43,7 @@ void XFTimeoutManagerDefault::start()
 
 void XFTimeoutManagerDefault::scheduleTimeout(int32_t timeoutId, int32_t interval, interface::XFReactive *pReactive)
 {
-    XFTimeout* newTimeout = new XFTimeout(timeoutId, interval, pReactive);
+    XFTimeout* newTimeout = new XFTimeout(timeoutId, interval, pReactive); //create the new timeout.
 
 
     addTimeout(newTimeout);
@@ -57,11 +57,11 @@ void XFTimeoutManagerDefault::unscheduleTimeout(int32_t timeoutId, interface::XF
     TimeoutList::iterator it =  _timeouts.begin();
 
 
-    while (it != _timeouts.end()) {
+    while (it != _timeouts.end()) { //goes through the whole list
 
-        if((*it)->getBehavior() == pReactive && (*it)->getId() == timeoutId)
+        if((*it)->getBehavior() == pReactive && (*it)->getId() == timeoutId) //find the correct timeout
         {
-            it = _timeouts.erase(it);
+            it = _timeouts.erase(it); //erase it, and get the next timeout, so no need to increment it.
         }
         else
         {
@@ -81,7 +81,7 @@ void XFTimeoutManagerDefault::tick()
 
     if(!_timeouts.empty())
     {
-        _timeouts.front()->substractFromRelTicks(_tickInterval);
+        _timeouts.front()->substractFromRelTicks(_tickInterval); //decrement only the first timeout
 
         while(!_timeouts.empty() && _timeouts.front()->getRelTicks() <= 0) //send all timers that ended up at 0
         {
@@ -104,8 +104,9 @@ void XFTimeoutManagerDefault::addTimeout(XFTimeout *pNewTimeout)
 
     bool inserted = false;
 
-    while (!inserted && it!= _timeouts.end()) {
-        if((*it)->getRelTicks() <= pNewTimeout->getRelTicks()){
+    while (!inserted && it!= _timeouts.end()) { //go through the list of timeout until found
+        if((*it)->getRelTicks() <= pNewTimeout->getRelTicks())
+        {
 
             pNewTimeout->substractFromRelTicks((*it)->getRelTicks()); //remove the adequate amount of relative ticks
 
@@ -122,7 +123,9 @@ void XFTimeoutManagerDefault::addTimeout(XFTimeout *pNewTimeout)
 
     if(!inserted)
     {
-        _timeouts.insert(it,pNewTimeout); //insert at the end
+    	//if it the timeout hasn't been inserted, it goes at the end.
+    	//Case where it's the first in the list or at the end of the list are handled here
+        _timeouts.insert(it,pNewTimeout);
     }
     _pMutex->unlock();
 
