@@ -61,7 +61,13 @@ void XFTimeoutManagerDefault::unscheduleTimeout(int32_t timeoutId, interface::XF
 
         if((*it)->getBehavior() == pReactive && (*it)->getId() == timeoutId) //find the correct timeout
         {
+            int ticks = (*it)->getRelTicks();
             it = _timeouts.erase(it); //erase it, and get the next timeout, so no need to increment it.
+
+            if(it != _timeouts.end())
+            {
+                (*it)->addToRelTicks(ticks);
+            }
         }
         else
         {
